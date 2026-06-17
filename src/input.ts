@@ -13,6 +13,16 @@ export const COMMANDS = [
   { key: 'Double click', action: 'Toggle fullscreen' },
 ] as const
 
+export const MOBILE_COMMANDS = [
+  { key: 'Joystick', action: 'Move Mario' },
+  { key: 'Run', action: 'Toggle run/walk' },
+  { key: 'A', action: 'Jump' },
+  { key: 'B', action: 'Slide' },
+  { key: 'X', action: 'Moonwalk' },
+  { key: 'Y', action: 'Dance' },
+  { key: 'Touch drag', action: 'Rotate camera' },
+] as const
+
 export const RUN_TOGGLE_CODE = 'KeyR'
 export const DEBUG_TOGGLE_CODE = 'KeyG'
 export const GAMEPLAY_KEYS = new Set<CommandKey>(['w', 'a', 's', 'd', ' ', 'arrowdown', 'm', 'b'])

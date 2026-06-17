@@ -16,7 +16,7 @@ import { initHelpers, axesHelper, pointLightHelper, gridHelper } from './helpers
 import { initCameraAndControls, camera, cameraControls } from './controls';
 import { loadRoom, loadMirrors, loadMario, mario, characterControls, setObjectsLoadingManager } from './objects';
 import { KeysPressed, ROOM_BOUNDARIES } from './helpers/characterControls';
-import { COMMANDS, DEBUG_TOGGLE_CODE, GAMEPLAY_KEYS, RUN_TOGGLE_CODE } from './input';
+import { COMMANDS, DEBUG_TOGGLE_CODE, GAMEPLAY_KEYS, MOBILE_COMMANDS, RUN_TOGGLE_CODE } from './input';
 import { MIRROR_ROOM_VIDEO } from './videoReference';
 
 const CANVAS_ID = 'scene'
@@ -272,7 +272,8 @@ function createControlsLegend() {
   panel.appendChild(summary)
 
   const list = document.createElement('dl')
-  COMMANDS.forEach(({ key, action }) => {
+  const commands = mobilePanelsQuery.matches ? MOBILE_COMMANDS : COMMANDS
+  commands.forEach(({ key, action }) => {
     const keyElement = document.createElement('dt')
     keyElement.textContent = key
     const actionElement = document.createElement('dd')
@@ -298,13 +299,17 @@ function createMobileControls() {
   joystick.appendChild(knob)
 
   const actions = document.createElement('div')
-  actions.className = 'mobile-action-grid'
+  actions.className = 'mobile-action-pad'
 
-  const addHoldButton = (label: string, key: keyof KeysPressed) => {
+  const diamond = document.createElement('div')
+  diamond.className = 'mobile-action-diamond'
+
+  const addHoldButton = (label: string, actionLabel: string, key: keyof KeysPressed, className: string) => {
     const button = document.createElement('button')
     button.type = 'button'
-    button.className = 'mobile-action-button'
+    button.className = `mobile-action-button ${className}`
     button.textContent = label
+    button.setAttribute('aria-label', actionLabel)
     button.addEventListener('pointerdown', (event) => {
       event.preventDefault()
       button.setPointerCapture(event.pointerId)
@@ -319,22 +324,24 @@ function createMobileControls() {
     button.addEventListener('lostpointercapture', () => {
       keysPressed[key] = false
     })
-    actions.appendChild(button)
+    diamond.appendChild(button)
   }
 
   const runButton = document.createElement('button')
   runButton.type = 'button'
-  runButton.className = 'mobile-action-button mobile-run-button'
+  runButton.className = 'mobile-system-button mobile-run-button'
   runButton.textContent = 'Run'
+  runButton.setAttribute('aria-label', 'Toggle run')
   runButton.addEventListener('click', () => {
     characterControls?.switchRunToToggle()
   })
   actions.appendChild(runButton)
 
-  addHoldButton('Jump', ' ')
-  addHoldButton('Slide', 'arrowdown')
-  addHoldButton('Dance', 'b')
-  addHoldButton('Moon', 'm')
+  addHoldButton('Y', 'Dance', 'b', 'mobile-button-y')
+  addHoldButton('X', 'Moonwalk', 'm', 'mobile-button-x')
+  addHoldButton('B', 'Slide', 'arrowdown', 'mobile-button-b')
+  addHoldButton('A', 'Jump', ' ', 'mobile-button-a')
+  actions.appendChild(diamond)
 
   const clearDirection = () => {
     keysPressed.w = false

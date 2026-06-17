@@ -206,7 +206,8 @@ canvas {
 }
 
 .mobile-joystick,
-.mobile-action-button {
+.mobile-action-button,
+.mobile-system-button {
   pointer-events: auto;
   user-select: none;
   -webkit-user-select: none;
@@ -260,37 +261,110 @@ canvas {
   transform: translate(-50%, -50%);
 }
 
-.mobile-action-grid {
+.mobile-action-pad {
   display: grid;
-  grid-template-columns: repeat(2, 68px);
-  gap: 10px;
+  grid-template-rows: 34px 132px;
+  gap: 8px;
   justify-content: end;
+  justify-items: center;
+  align-items: end;
+}
+
+.mobile-action-diamond {
+  position: relative;
+  width: 142px;
+  height: 132px;
 }
 
 .mobile-action-button {
-  width: 68px;
-  height: 48px;
+  position: absolute;
+  width: 54px;
+  height: 54px;
   border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 8px;
-  background: rgba(12, 14, 18, 0.68);
+  border-radius: 50%;
+  background: rgba(18, 21, 27, 0.78);
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
   color: rgba(255, 255, 255, 0.94);
   font: inherit;
-  font-size: 0.78rem;
-  font-weight: 800;
+  font-size: 1rem;
+  font-weight: 900;
   line-height: 1;
   backdrop-filter: blur(12px);
   touch-action: none;
 }
 
+.mobile-action-button::after {
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  content: '';
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
 .mobile-action-button:active {
   background: rgba(86, 212, 200, 0.78);
   color: #081315;
+  transform: translateY(2px);
+}
+
+.mobile-button-y {
+  top: 0;
+  left: 50%;
+  background: rgba(244, 199, 80, 0.86);
+  color: #181204;
+  transform: translateX(-50%);
+}
+
+.mobile-button-x {
+  top: 39px;
+  left: 8px;
+  background: rgba(80, 150, 244, 0.86);
+}
+
+.mobile-button-b {
+  top: 39px;
+  right: 8px;
+  background: rgba(232, 83, 83, 0.86);
+}
+
+.mobile-button-a {
+  bottom: 0;
+  left: 50%;
+  background: rgba(86, 212, 126, 0.86);
+  color: #061609;
+  transform: translateX(-50%);
+}
+
+.mobile-button-y:active,
+.mobile-button-a:active {
+  transform: translateX(-50%) translateY(2px);
+}
+
+.mobile-system-button {
+  min-width: 74px;
+  height: 30px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(12, 14, 18, 0.66);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.24);
+  color: rgba(255, 255, 255, 0.88);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  backdrop-filter: blur(12px);
+  touch-action: none;
+}
+
+.mobile-system-button:active {
+  background: rgba(244, 199, 80, 0.84);
+  color: #191305;
 }
 
 .mobile-run-button {
-  background: rgba(244, 199, 80, 0.78);
-  color: #191305;
+  justify-self: center;
 }
 
 @media (max-width: 520px) {
@@ -351,14 +425,24 @@ canvas {
     height: 48px;
   }
 
-  .mobile-action-grid {
-    grid-template-columns: repeat(2, 62px);
-    gap: 8px;
+  .mobile-action-pad {
+    grid-template-rows: 32px 118px;
+    gap: 7px;
+  }
+
+  .mobile-action-diamond {
+    width: 128px;
+    height: 118px;
   }
 
   .mobile-action-button {
-    width: 62px;
-    height: 44px;
-    font-size: 0.72rem;
+    width: 50px;
+    height: 50px;
+    font-size: 0.92rem;
+  }
+
+  .mobile-button-x,
+  .mobile-button-b {
+    top: 34px;
   }
 }
