@@ -2,7 +2,7 @@
 ![Super Mario 64 scene preview](assets/images/Super_Mario_64_logo.png)
 
 Three.js/Vite project inspired by the mirror room from Super Mario 64. The application renders an interactive 3D room with an animated Mario model, reflective mirrors, textured materials, bump maps, shadows, keyboard controls, mobile touch controls, collision handling, loading feedback, and optional debug tools.
-![Mirror Room](assets/docs/images/mirror-room.jpeg)
+
 ## Table of Contents
 
 - [Overview](#overview)
@@ -238,7 +238,7 @@ If assets are renamed or moved, update the paths in `src/objects.ts` and ensure 
 
 ## Documentation Media
 
-The visual documentation originally referenced by `module2.html` is stored under `assets/docs/`. The README uses those files directly so the rendered documentation keeps the same visual support without broken relative paths.
+The visual documentation is stored under `assets/docs/`. The README uses those files directly so the rendered documentation keeps the same visual support without broken relative paths.
 
 | Topic | File |
 | --- | --- |
