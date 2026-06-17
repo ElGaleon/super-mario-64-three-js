@@ -40,6 +40,7 @@ let loadingProgress: HTMLDivElement
 let loadingLabel: HTMLParagraphElement
 let sidePanelStack: HTMLDivElement
 let debugVisible = false
+const mobilePanelsQuery = window.matchMedia('(hover: none), (pointer: coarse), (max-width: 760px)')
 
 const myScene = {
     showBumpMap: true, 
@@ -66,6 +67,7 @@ function init() {
   createLevelInfoPanel()
   createControlsLegend()
   createLoadingOverlay()
+  createMobileControls()
 
   // ===== 👨🏻‍💼 LOADING MANAGER =====
   {
@@ -235,7 +237,7 @@ function createSidePanelStack() {
 function createLevelInfoPanel() {
   const panel = document.createElement('details')
   panel.className = 'scene-info-panel'
-  panel.open = true
+  panel.open = !mobilePanelsQuery.matches
 
   const summary = document.createElement('summary')
   summary.textContent = LEVEL_INFO.title
@@ -263,7 +265,7 @@ function createLevelInfoPanel() {
 function createControlsLegend() {
   const panel = document.createElement('details')
   panel.className = 'controls-legend'
-  panel.open = true
+  panel.open = !mobilePanelsQuery.matches
 
   const summary = document.createElement('summary')
   summary.textContent = 'Controls'
@@ -280,6 +282,119 @@ function createControlsLegend() {
 
   panel.appendChild(list)
   sidePanelStack.appendChild(panel)
+}
+
+function createMobileControls() {
+  const controls = document.createElement('div')
+  controls.className = 'mobile-controls'
+  controls.setAttribute('aria-label', 'Mobile controls')
+
+  const joystick = document.createElement('div')
+  joystick.className = 'mobile-joystick'
+  joystick.setAttribute('aria-label', 'Move Mario')
+
+  const knob = document.createElement('div')
+  knob.className = 'mobile-joystick-knob'
+  joystick.appendChild(knob)
+
+  const actions = document.createElement('div')
+  actions.className = 'mobile-action-grid'
+
+  const addHoldButton = (label: string, key: keyof KeysPressed) => {
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.className = 'mobile-action-button'
+    button.textContent = label
+    button.addEventListener('pointerdown', (event) => {
+      event.preventDefault()
+      button.setPointerCapture(event.pointerId)
+      keysPressed[key] = true
+    })
+    const release = (event: PointerEvent) => {
+      event.preventDefault()
+      keysPressed[key] = false
+    }
+    button.addEventListener('pointerup', release)
+    button.addEventListener('pointercancel', release)
+    button.addEventListener('lostpointercapture', () => {
+      keysPressed[key] = false
+    })
+    actions.appendChild(button)
+  }
+
+  const runButton = document.createElement('button')
+  runButton.type = 'button'
+  runButton.className = 'mobile-action-button mobile-run-button'
+  runButton.textContent = 'Run'
+  runButton.addEventListener('click', () => {
+    characterControls?.switchRunToToggle()
+  })
+  actions.appendChild(runButton)
+
+  addHoldButton('Jump', ' ')
+  addHoldButton('Slide', 'arrowdown')
+  addHoldButton('Dance', 'b')
+  addHoldButton('Moon', 'm')
+
+  const clearDirection = () => {
+    keysPressed.w = false
+    keysPressed.a = false
+    keysPressed.s = false
+    keysPressed.d = false
+  }
+
+  const updateJoystick = (event: PointerEvent) => {
+    const rect = joystick.getBoundingClientRect()
+    const centerX = rect.left + rect.width / 2
+    const centerY = rect.top + rect.height / 2
+    const maxDistance = rect.width * 0.34
+    const rawX = event.clientX - centerX
+    const rawY = event.clientY - centerY
+    const distance = Math.min(maxDistance, Math.hypot(rawX, rawY))
+    const angle = Math.atan2(rawY, rawX)
+    const x = Math.cos(angle) * distance
+    const y = Math.sin(angle) * distance
+
+    knob.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`
+    clearDirection()
+
+    if (distance < maxDistance * 0.28) {
+      return
+    }
+
+    const normalizedX = rawX / maxDistance
+    const normalizedY = rawY / maxDistance
+    keysPressed.w = normalizedY < -0.34
+    keysPressed.s = normalizedY > 0.34
+    keysPressed.a = normalizedX < -0.34
+    keysPressed.d = normalizedX > 0.34
+  }
+
+  const resetJoystick = () => {
+    clearDirection()
+    knob.style.transform = 'translate(-50%, -50%)'
+  }
+
+  joystick.addEventListener('pointerdown', (event) => {
+    event.preventDefault()
+    joystick.setPointerCapture(event.pointerId)
+    updateJoystick(event)
+  })
+  joystick.addEventListener('pointermove', (event) => {
+    if (joystick.hasPointerCapture(event.pointerId)) {
+      event.preventDefault()
+      updateJoystick(event)
+    }
+  })
+  joystick.addEventListener('pointerup', (event) => {
+    event.preventDefault()
+    resetJoystick()
+  })
+  joystick.addEventListener('pointercancel', resetJoystick)
+  joystick.addEventListener('lostpointercapture', resetJoystick)
+
+  controls.append(joystick, actions)
+  document.body.appendChild(controls)
 }
 
 function setDebugVisible(value: boolean) {

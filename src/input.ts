@@ -9,6 +9,7 @@ export const COMMANDS = [
   { key: 'B', action: 'Dance' },
   { key: 'G', action: 'Show/hide debug' },
   { key: 'Mouse', action: 'Rotate camera' },
+  { key: 'Touch', action: 'Mobile controls' },
   { key: 'Double click', action: 'Toggle fullscreen' },
 ] as const
 
